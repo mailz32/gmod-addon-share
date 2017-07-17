@@ -1,0 +1,12 @@
+{
+	"title"	:	"Addon Share",
+	"type"	:	"tool",
+	"ignore"	:
+	[
+		"*.*~",
+		"*.txt",
+		".git*",
+		"LICENSE",
+		"README.md"
+	]
+}
