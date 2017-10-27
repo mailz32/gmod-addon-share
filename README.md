@@ -3,5 +3,5 @@
 Find more detailed description on [Steam Workshop page](http://steamcommunity.com/sharedfiles/filedetails/?id=973145750).
 To install as legacy addon, navigate to garrysmod/addons and execute
 ```bash
-git clone https://github.com/mailz32/gmod-addon-share.git "addon share"
+git clone https://github.com/mailz32/gmod-addon-share.git addonshare
 ```
