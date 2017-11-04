@@ -1,4 +1,5 @@
 AS_AddonsTable = engine.GetAddons()
+AS_AddonsTable.version = 0.1
 
 -- Sendint table to client after spawning
 util.AddNetworkString("addonshare_addons_table")
