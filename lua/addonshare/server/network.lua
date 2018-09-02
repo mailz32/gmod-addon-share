@@ -7,8 +7,9 @@ Takes:
 Sends addons' wsids as UInt values
 --]]
 function addonshare.SendTable( player )
-		local count = math.min(#addonshare.Addons, 8192)
+		local count = math.min(#addonshare.Addons, 8191)
 		net.Start(addonshare.NET_ADDONSHARE_TABLE)
+		net.WriteUInt( count, 32 )
 		for i = 1, count do
 				net.WriteUInt( addonshare.Addons[i].wsid, 32 )
 		end

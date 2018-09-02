@@ -8,13 +8,12 @@ Supposed to retrieve up to 8192 UInt values
 --]]
 function addonshare.UnpackList()
 		local wsid
-		local counter = 0
+		local counter = net.ReadUInt( 32 )
 		local list = {}
-		while counter < 8192 do
+		while counter > 0 do
 				wsid = net.ReadUInt( 32 )
-				if wsid == 0 then break end
 				table.insert( list, { ['wsid'] = wsid } )
-				counter = counter + 1
+				counter = counter - 1
 		end
 		return list
 end
