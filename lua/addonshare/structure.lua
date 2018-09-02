@@ -4,6 +4,7 @@
 addonshare = {
 	_VERSION = 0.2,
 	Addons = engine.GetAddons(),
+	HOOK_ADDONSHARE_SEND_TABLE = 'AddonShare_send_table',
 	NET_ADDONSHARE_TABLE = 'AddonShare_table'
 	--NET_ADDONSHARE_SETTINGS = 'AddonShare_settings'
 }

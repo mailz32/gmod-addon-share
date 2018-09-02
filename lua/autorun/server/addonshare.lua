@@ -2,12 +2,11 @@
 
 if game.SinglePlayer() then return end
 
-include( 'addonshare/structure.lua' )
+AddCSLuaFile( 'addonshare/client/init.lua' )
+AddCSLuaFile( 'addonshare/client/network.lua' )
+AddCSLuaFile( 'addonshare/structure.lua' )
+
+include( 'addonshare/structure.lua' ) -- make this first
 include( 'addonshare/server/file.lua' )
 include( 'addonshare/server/network.lua' )
-
-if game.IsDedicated() then
-		addonshare.DesiredFilter = addonshare.FilterByContent
-else
-		addonshare.DesiredFilter = addonshare.FilterByTags
-end
+include( 'addonshare/server/init.lua' ) -- make this last

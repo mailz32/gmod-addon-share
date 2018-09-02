@@ -20,6 +20,28 @@ function addonshare.UnpackList()
 end
 
 --[[
+	table addon = function addonshare.ProcessAddonInfo( table steamworks_addon )
+Takes:
+	* steamworks_addon - addon description, obtained with steamworks.FileInfo() function
+Returns:
+	* addon - addon description, prepared for work within Addon Share
+--]]
+function addonshare.ProcessAddonInfo( steamworks_addon )
+		local addon = {}
+
+		addon.tags = steamworks_addon.tags
+		addon.title = steamworks_addon.title
+		addon.wsid = steamworks_addon.id
+
+		local description = steamworks_addon.description
+		description = string.gsub(description, '%[.-%]', '') -- remove tags
+		description = string.sub(description, 1, 197) .. '...'
+		addon.short_desc = description
+
+		return addon
+end
+
+--[[
 	table completed = function addonshare.RetrieveAddonsInfo( table addons )
 Takes:
 	* addons - table of addons, which require info update
@@ -33,7 +55,7 @@ function addonshare.RetrieveAddonsInfo( addons )
 	for i, addon in ipairs( addons ) do
 		steamworks.FileInfo( addon.wsid,
 			function ( result )
-				table.insert( completed, result )
+				table.insert( completed, addonshare.ProcessAddonInfo( result ) )
 			end)
 	end
 	return completed
@@ -45,4 +67,4 @@ function addonshare.ReceiveList()
 		addonshare.Addons = addonshare.RetrieveAddonsInfo( list )
 end
 
---net.Receive( addonshare.NET_ADDONSHARE_TABLE, addonshare.ReceiveList )
+net.Receive( addonshare.NET_ADDONSHARE_TABLE, addonshare.ReceiveList )
