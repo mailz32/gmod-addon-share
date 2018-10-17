@@ -63,7 +63,7 @@ end
 -- Just a wrapper for previous functions, look above
 function addonshare.ReceiveList()
 		local list = addonshare.UnpackList()
-		addonshare.Addons = addonshare.RetrieveAddonsInfo( list )
+		addonshare.ServerAddons = addonshare.RetrieveAddonsInfo( list )
 end
 
 net.Receive( addonshare.NET_ADDONSHARE_TABLE, addonshare.ReceiveList )
