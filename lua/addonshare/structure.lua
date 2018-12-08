@@ -13,12 +13,14 @@ addonshare = {
 Takes:
     * addons - table of addons, structured like engine.GetAddons()
 Returns:
-    * filtered - table of addons, filtered by models count and tags
+    * filtered - table of addons, filtered by models count --and tags
 --]]
 function addonshare.FilterByTags( addons )
     local filtered = {}
     for _, addon in ipairs( addons ) do
-        if not string.find( addon.tags, 'map' ) and addon.models > 0
+        if  addon.mounted
+            and not string.find( addon.tags, 'map' )
+            --and addon.models > 0
         then
             table.insert( filtered, addon )
         end

@@ -1,12 +1,8 @@
-if game.IsDedicated() then
-    addonshare.DesiredFilter = addonshare.FilterByContent
-else
-    addonshare.DesiredFilter = addonshare.FilterByTags
-end
-
 addonshare.Addons = engine.GetAddons()
 
-addonshare.Filtered = addonshare.DesiredFilter( addonshare.Addons )
+addonshare.Mounted = addonshare.FilterByTags( addonshare.Addons )
+addonshare.Filtered = addonshare.FilterByContent( addonshare.Mounted )
+
 for _, addon in ipairs( addonshare.Filtered ) do
     resource.AddWorkshop( addon.wsid )
 end

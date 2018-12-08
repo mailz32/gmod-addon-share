@@ -1,1 +1,1 @@
--- TODO
+-- TODO: ConVar checks, file settings reading

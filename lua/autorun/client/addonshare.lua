@@ -2,6 +2,6 @@
 
 if game.SinglePlayer() then return end
 
-include( 'addonshare/structure.lua' ) -- make this first
+include( 'addonshare/structure.lua' )
 include( 'addonshare/client/network.lua' )
-include( 'addonshare/client/init.lua' ) -- make this last
+include( 'addonshare/client/init.lua' )

@@ -9,7 +9,7 @@ AddCSLuaFile( 'addonshare/client/init.lua' )
 AddCSLuaFile( 'addonshare/client/network.lua' )
 AddCSLuaFile( 'addonshare/structure.lua' )
 
-include( 'addonshare/structure.lua' ) -- make this first
+include( 'addonshare/structure.lua' )
 include( 'addonshare/server/file.lua' )
 include( 'addonshare/server/network.lua' )
-include( 'addonshare/server/init.lua' ) -- make this last
+include( 'addonshare/server/init.lua' )
