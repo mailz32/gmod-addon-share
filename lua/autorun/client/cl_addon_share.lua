@@ -1,5 +1,19 @@
+if game.SinglePlayer() then
+    return
+end
+
 net.Receive("addonshare_addons_table", function()
-	AS_AddonsTable = net.ReadTable()
+    AS_ReceivedData = AS_ReceivedData or ""
+    local msg_len = 0
+    local last_msg = false
+    last_msg = net.ReadBool()
+    msg_len = net.ReadUInt(16)
+    AS_ReceivedData = AS_ReceivedData .. net.ReadData(msg_len)
+    if last_msg then
+        AS_AddonsTable = util.JSONToTable(util.Decompress(AS_ReceivedData))
+        table.sort(AS_AddonsTable, function(l, r) return l.title < r.title end)
+        AS_ReceivedData = nil
+    end
 end)
 
 local categoryIcons = {
@@ -14,24 +28,29 @@ local categoryIcons = {
 	["Weapon"] = "icon16/gun.png"
 }
 
-local function addToMenu(Parent, wsid, category, title, mounted)
+local function addToMenu(Parent, Entry, Previous)
 	local panel = vgui.Create("DPanel", Parent)
 	panel:SetHeight(20)
-	if mounted then
-		panel:SetPaintBackground(false)
-	end
+    panel:SetPaintBackground(false)
 	panel:Dock(TOP)
 	panel:DockMargin(2, 2, 0, 2)
+    if Previous then
+        panel:MoveBelow(Previous)
+    end
 
 	local iconSubscribed = vgui.Create("DImage", panel)
-	iconSubscribed:SetImage(steamworks.IsSubscribed(wsid) and "icon16/plugin.png" or "icon16/plugin_disabled.png")
+	iconSubscribed:SetImage(steamworks.IsSubscribed(Entry.wsid) and "icon16/plugin.png" or "icon16/plugin_disabled.png")
 	iconSubscribed:SetSize(16, 16)
 	iconSubscribed:SetKeepAspect(true)
 	iconSubscribed:Dock(LEFT)
 	iconSubscribed:DockMargin(2, 2, 2, 2)
 
 	local iconCategory = vgui.Create("DImage", panel)
-	iconCategory:SetImage(categoryIcons[category] or "icon16/page_white.png")
+    if title == "Addon Share" then
+        iconCategory:SetImage("icon16/star.png")
+    else
+        iconCategory:SetImage(categoryIcons[Entry.category] or "icon16/page_white.png")
+    end
 	iconCategory:SetKeepAspect(true)
 	iconCategory:Dock(LEFT)
 	iconCategory:DockMargin(2, 2, 2, 2)
@@ -40,26 +59,33 @@ local function addToMenu(Parent, wsid, category, title, mounted)
 	local buttonWorkshop = vgui.Create("DButton", panel)
 	buttonWorkshop:SetText("WS")
 	buttonWorkshop:SizeToContents()
-	buttonWorkshop.DoClickInternal = function() steamworks.ViewFile(wsid)  end
+	buttonWorkshop.DoClickInternal = function() steamworks.ViewFile(Entry.wsid)  end
 	buttonWorkshop:Dock(LEFT)
 	buttonWorkshop:DockMargin(2, 2, 4, 2)
 
 	local label = vgui.Create("DLabel", panel)
-	label:SetText(title)
+	label:SetText(Entry.title)
 	label:SetDark(true)
 	label:Dock(FILL)
+
+    return panel
 end
 
 local function addonMenu(Panel)
-	Panel:SetName("List of serverside addons ("..#AS_AddonsTable..")")
+	Panel:SetName("Addon Share")
 	if not AS_AddonsTable then
 		Panel:Help("Error occurred while receiving addons data from server. Has server 'Addon Share' installed?")
 		return nil
 	end
-	Panel:Help("Marked addons are disabled.\nHit [WS] button to open addon's workshop page.\nSubscription status will update on map change.")
-	for _, entry in pairs(AS_AddonsTable) do
-		local category = entry.tags:match(",(%a+)") -- extracts second value from tags, separated by commas, which is addon's category
-		addToMenu(Panel, entry.wsid, category, entry.title, entry.mounted)
+	if #AS_AddonsTable == 0 then
+		Panel:Help("Looks like this server has no Workshop addons installed")
+		return nil
+	end
+	Panel:SetName("List of serverside addons ("..#AS_AddonsTable..")")
+	Panel:Help("Hit [WS] button to open addon's workshop page.\nGreen puzzle icon means you're subscribed for that.\nSubscription status will update on map change.")
+    local prev
+	for _, entry in ipairs(AS_AddonsTable) do
+		prev = addToMenu(Panel, entry, prev)
 	end
 end
 
