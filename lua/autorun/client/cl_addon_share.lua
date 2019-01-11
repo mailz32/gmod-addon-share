@@ -46,8 +46,8 @@ local function addToMenu(Parent, Entry, Previous)
 	iconSubscribed:DockMargin(2, 2, 2, 2)
 
 	local iconCategory = vgui.Create("DImage", panel)
-    if title == "Addon Share" then
-        iconCategory:SetImage("icon16/star.png")
+    if Entry.wsid == "973145750" then
+        iconCategory:SetImage("icon16/star.png") --star this addon in list
     else
         iconCategory:SetImage(categoryIcons[Entry.category] or "icon16/page_white.png")
     end
