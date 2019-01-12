@@ -1,3 +1,7 @@
+-- You may view source code and contribute to this addon on github
+-- https://github.com/mailz32/gmod-addon-share
+-- It's licensed under MIT license
+
 if game.SinglePlayer() then
     return
 end
@@ -8,20 +12,21 @@ CreateConVar("addonshare_send_maps", "0", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_ARCHI
 
 -- Concmd
 concommand.Add("addonshare_manual", function (ply, cmd, args)
-    local id = tonumber( args[1] )
+    local id = tonumber(args[1])
     if id then
-        resource.AddWorkshop( id )
+        resource.AddWorkshop(id)
         MsgN("[Addon Share] Manually added an addon with ID " .. id)
     end
 end, function () end,
 "Specify extra addon to be downloaded by client. Use 'id' number from Workshop addon page URI (link)", FCVAR_SERVER_CAN_EXECUTE)
 
+-- Preparing table
 local AddonsTable = {}
 for _, i in ipairs(engine.GetAddons()) do
     local entry = {title=i.title, wsid=i.wsid}
-    entry.category = i.tags:match(",(%a+)") -- extracts second value from tags, separated by commas, which is addon's category
+    entry.category = i.tags:match(",(%a+)") -- extracts second tag, which is addon's category
     if (entry.category != "map" or
-        GetConVar("addonshare_send_maps"):GetBool()) 
+        GetConVar("addonshare_send_maps"):GetBool())
     then
         table.insert(AddonsTable, entry)
     end
@@ -29,7 +34,7 @@ end
 
 AS_DataToSend = util.Compress(util.TableToJSON(AddonsTable))
 
--- Sendint table to client after spawning
+-- Sending compressed table to client (after he spawns)
 util.AddNetworkString("addonshare_addons_table")
 hook.Add("PlayerInitialSpawn", "Addon Share send table", function(ply)
     local startpos = 0
@@ -47,17 +52,16 @@ hook.Add("PlayerInitialSpawn", "Addon Share send table", function(ply)
     end
 end)
 
--- AddWorkshop job
-
+-- Require client to cache addons on connect
 if GetConVar("addonshare_auto"):GetBool() then
-	local counter = 0
-	for _, entry in ipairs(engine.GetAddons()) do
-		if entry.mounted and entry.models > 0 and not entry.tags:find( 'map' ) then
-			resource.AddWorkshop( entry.wsid )
-			counter = counter + 1
-		end
-	end
-	MsgN("[Addon Share] Auto added "..counter.." addons for clients to download on connect")
+    local counter = 0
+    for _, entry in ipairs(engine.GetAddons()) do
+        if entry.mounted and entry.models > 0 and not entry.tags:find('map') then
+            resource.AddWorkshop(entry.wsid)
+            counter = counter + 1
+        end
+    end
+    MsgN("[Addon Share] Auto added "..counter.." addons for clients to download on connect")
 else
-	MsgN("[Addon Share] Nothing will be auto added to dependencies for clients due to 'addonshare_auto 0'")
+    MsgN("[Addon Share] Nothing will be auto added to dependencies for clients due to 'addonshare_auto 0'")
 end
