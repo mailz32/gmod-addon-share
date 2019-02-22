@@ -22,10 +22,11 @@ end, function () end,
 
 -- Preparing table
 local AddonsTable = {}
-for _, i in ipairs(engine.GetAddons()) do
-    local entry = {title=i.title, wsid=i.wsid}
-    entry.category = i.tags:match(",(%a+)") -- extracts second tag, which is addon's category
-    if (entry.category != "map" or
+for _, raw_entry in ipairs(engine.GetAddons()) do
+    local entry = {title=raw_entry.title, wsid=raw_entry.wsid}
+    entry.category = raw_entry.tags:match(",(%a+)") -- extracts second tag, which is addon's category
+    if raw_entry.mounted and
+       (entry.category != "map" or
         GetConVar("addonshare_send_maps"):GetBool())
     then
         table.insert(AddonsTable, entry)
